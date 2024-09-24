@@ -6,6 +6,7 @@ import 'package:new_device_apps/device_apps.dart';
 import '../features/app_usage_statge_details/presentation/pages/app_usage_statge_details.dart';
 import '../features/home_page/presentation/manager/bloc/app_bloc.dart';
 import '../features/home_page/presentation/pages/home_page.dart';
+import '../features/test_screen/test_screen.dart';
 import '../injection_container.dart';
 
 part 'name_routs.dart';
@@ -27,5 +28,11 @@ final GoRouter router = GoRouter(
           final param = state.extra as Application;
           return  AppUsageStatgeDetails(application: param,);
         }),
+    GoRoute(
+      path:  Routes.testScreen,
+      name:  Routes.testScreen,
+      builder: (context, state) => ScreenTimeTracker(),
+    ),
+
   ],
 );

@@ -6,8 +6,9 @@ plugins {
 
 android {
     namespace = "com.example.parental_control"
-    testNamespace = "com.example.usage_stats_new"
-    compileSdk = 34
+  /*  testNamespace = "com.example.usage_stats_new"*/
+   /* namespace = "com.example.usage_stats_new"*/
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -22,7 +23,7 @@ android {
     defaultConfig {
         applicationId = "com.example.parental_control"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -36,4 +37,7 @@ android {
 
 flutter {
     source = "../.."
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-script-runtime:1.8.22"
 }
