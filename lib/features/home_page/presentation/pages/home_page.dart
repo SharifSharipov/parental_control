@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_device_apps/device_apps.dart';
+import '../../../../router/app_routs.dart';
 import '../manager/bloc/app_bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,6 +48,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: Center(
                         child: ListTile(
+                          onTap: ()async{
+                            await context.pushNamed(Routes.appUsageStatgeDetails,extra: app);
+                          },
                           leading: app is ApplicationWithIcon
                               ? Image.memory(app.icon)
                               : null,
