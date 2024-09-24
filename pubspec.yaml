@@ -18,7 +18,7 @@ dependencies:
   # router
   go_router: ^14.2.7
   # Parent control
-  usage_stats: ^1.2.0
+  usage_stats_new: ^2.0.5
   # Get device apps access
   new_device_apps: ^1.0.0
   # hive
