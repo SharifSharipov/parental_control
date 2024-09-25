@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.parental_control"
-        minSdk = 21
+        minSdk = 22
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName

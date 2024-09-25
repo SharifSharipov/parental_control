@@ -24,8 +24,8 @@ class ScreenTimeActivity: FlutterActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState()
-                sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        super.onCreate(savedInstanceState)
+        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         // Usage Access ruxsatini tekshirish va so'rash
         if (!isUsageStatsPermissionGranted()) {
@@ -42,11 +42,20 @@ class ScreenTimeActivity: FlutterActivity() {
                     val usageStats = getUsageStats()
                     result.success(usageStats)
                 }
+                "resetUsageTime" -> {
+                    resetUsageTime()
+                    result.success(null)
+                }
                 else -> {
                     result.notImplemented()
                 }
             }
         }
+    }
+
+    private fun resetUsageTime() {
+        // Ma'lumotlarni reset qilish
+        sharedPreferences.edit().clear().apply()
     }
 
     private fun isUsageStatsPermissionGranted(): Boolean {
