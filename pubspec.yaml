@@ -32,6 +32,8 @@ dependencies:
   dio_retry_plus: ^2.0.7
   # box
   gap: ^3.0.1
+  #zoom_tap_animation
+  zoom_tap_animation: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,12 +1,19 @@
 package com.example.parental_control
 
+import android.app.usage.UsageStats
+import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.util.concurrent.TimeUnit
 
 class ScreenTimeActivity: FlutterActivity() {
     private val CHANNEL = "com.example.parental_control/screen_time"
@@ -14,30 +21,26 @@ class ScreenTimeActivity: FlutterActivity() {
 
     companion object {
         const val PREFS_NAME = "ScreenTimePrefs"
-        const val USAGE_TIME_KEY = "usage_time"
     }
 
-    private var startTime: Long = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        startTime = System.currentTimeMillis()
+        super.onCreate(savedInstanceState()
+                sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        // Usage Access ruxsatini tekshirish va so'rash
+        if (!isUsageStatsPermissionGranted()) {
+            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+        }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        // Setup MethodChannel
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
-                "getUsageTime" -> {
-                    val usageTime = getUsageTime()
-                    result.success(usageTime)
-                }
-                "resetUsageTime" -> {
-                    resetUsageTime()
-                    result.success(null)
+                "getUsageStats" -> {
+                    val usageStats = getUsageStats()
+                    result.success(usageStats)
                 }
                 else -> {
                     result.notImplemented()
@@ -46,17 +49,37 @@ class ScreenTimeActivity: FlutterActivity() {
         }
     }
 
-    private fun getUsageTime(): Long {
-        return sharedPreferences.getLong(USAGE_TIME_KEY, 0)
+    private fun isUsageStatsPermissionGranted(): Boolean {
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+        val mode = appOps.checkOpNoThrow(
+            android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(), packageName
+        )
+        return mode == android.app.AppOpsManager.MODE_ALLOWED
     }
 
-    private fun resetUsageTime() {
-        sharedPreferences.edit().putLong(USAGE_TIME_KEY, 0).apply()
-    }
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    private fun getUsageStats(): Map<String, Long> {
+        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val endTime = System.currentTimeMillis()
+        val startTime = endTime - TimeUnit.HOURS.toMillis(24)  // So'nggi 24 soat
 
-    override fun onDestroy() {
-        super.onDestroy()
-        val totalUsageTime = getUsageTime() + (System.currentTimeMillis() - startTime)
-        sharedPreferences.edit().putLong(USAGE_TIME_KEY, totalUsageTime).apply()
+        // Usage statistikasini olish
+        val usageStats: List<UsageStats> = usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY, startTime, endTime
+        )
+
+        val appUsageMap = mutableMapOf<String, Long>()
+
+        // Har bir ilovaning ishlash vaqtini hisoblash
+        usageStats.forEach { stats ->
+            val packageName = stats.packageName
+            val totalTime = stats.totalTimeInForeground
+            if (totalTime > 0) {
+                appUsageMap[packageName] = totalTime
+            }
+        }
+
+        return appUsageMap
     }
 }

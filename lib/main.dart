@@ -123,3 +123,63 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }*/
+///1
+/*package com.example.parental_control
+
+import android.app.usage.UsageStats
+import android.app.usage.UsageStatsManager
+import android.content.Context
+import android.os.Build
+import android.os.Bundle
+import androidx.annotation.RequiresApi
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+import java.util.*
+
+class ScreenTimeActivity : FlutterActivity() {
+    private val CHANNEL = "com.example.parental_control/screen_time"
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            CHANNEL
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getUsageTime" -> {
+                    val usageTime = getTotalUsageTimeForApps()
+                    result.success(usageTime)
+                }
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    private fun getTotalUsageTimeForApps(): Map<String, Long> {
+        val usageStatsManager =
+            getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val endTime = System.currentTimeMillis()
+        val startTime = endTime - 1000 * 3600 * 24 // oxirgi 24 soatni oladi
+
+        val usageStatsList: List<UsageStats> =
+            usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
+
+        val appUsageMap = mutableMapOf<String, Long>()
+
+        for (usageStats in usageStatsList) {
+            val appName = usageStats.packageName
+            val timeInForeground = usageStats.totalTimeInForeground
+            if (timeInForeground > 0) {
+                appUsageMap[appName] = timeInForeground
+            }
+        }
+
+        return appUsageMap
+    }
+}
+*/
